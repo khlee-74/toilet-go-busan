@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12365a">
+<meta name="description" content="부산 화장실 위치와 이용 정보를 다국어로 확인하는 서비스">
+<title>Toilet Go Busan | YULIM Infotech</title>
+<style>
+:root{--navy:#12365a;--blue:#1765a0;--pale:#eef5fb;--ink:#182433;--muted:#64748b;--line:#dce5ee;--white:#fff;--green:#16794b}
+*{box-sizing:border-box}body{margin:0;background:#f5f8fb;color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:linear-gradient(120deg,#102b50,#1765a0);color:white;padding:14px 16px 22px}
+.top{max-width:900px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand img{width:125px;max-width:33vw;height:auto;object-fit:contain;background:white;border-radius:5px;padding:4px}
+.brandtext{font-size:12px;line-height:1.4;color:#dbeafe}.brandtext strong{display:block;font-size:20px;color:white;letter-spacing:-.4px}
+select,button{font:inherit}select{border:1px solid #cbd5e1;border-radius:10px;padding:9px;background:white;color:#12365a;max-width:145px}
+.hero{max-width:900px;margin:24px auto 0}.hero h1{font-size:clamp(26px,5vw,38px);line-height:1.15;margin:0 0 9px;letter-spacing:-1px}.hero p{margin:0;color:#e4effa;font-size:14px;line-height:1.6}
+main{max-width:900px;margin:-2px auto 0;padding:16px;display:grid;gap:14px}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 5px 20px #183c5b0b}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px 12px;font-weight:700;cursor:pointer;min-height:48px}.primary{background:var(--blue);color:white}.secondary{background:var(--pale);color:var(--navy);border:1px solid #d7e6f4}.btn:disabled{opacity:.6;cursor:wait}
+.status{font-size:13px;color:var(--muted);line-height:1.5;margin:12px 0 0}.status.error{color:#b42318}.status.ok{color:var(--green)}
+.results-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.results-head h2{font-size:18px;margin:0}.count{color:var(--muted);font-size:13px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.chip{border:1px solid var(--line);border-radius:999px;padding:8px 11px;background:white;color:#344256;font-size:13px;cursor:pointer}.chip.active{background:#e5f1fc;border-color:#9cc8ec;color:#124f80;font-weight:700}
+.cards{display:grid;gap:10px}.toilet{border:1px solid var(--line);border-radius:14px;padding:14px}.toilet h3{font-size:16px;margin:0 0 7px}.meta{font-size:13px;color:var(--muted);line-height:1.6}.tags{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}.tag{font-size:11px;padding:4px 7px;border-radius:6px;background:#f1f5f9;color:#475569}.cardlinks{display:flex;gap:8px;margin-top:10px}.cardlinks a{font-size:13px;text-decoration:none;font-weight:700;color:#1765a0;background:#eef5fb;padding:8px 10px;border-radius:8px}
+.empty{text-align:center;padding:28px 12px;color:var(--muted);line-height:1.6}.note{font-size:12px;color:var(--muted);line-height:1.6}
+footer{max-width:900px;margin:0 auto;padding:4px 18px 28px;color:#6b7280;font-size:12px;line-height:1.6}footer strong{color:#475569}
+@media(min-width:650px){main{grid-template-columns: minmax(0, .9fr) minmax(0,1.1fr);align-items:start}.searchpanel{position:sticky;top:12px}.resultspanel{min-height:250px}}
+@media(max-width:420px){.brand img{width:100px}.brandtext strong{font-size:17px}.top{align-items:flex-start}.actions{grid-template-columns:1fr}.panel{padding:13px}main{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">
+      <img src="yulim_logo.png" alt="YULIM Infotech 공식 로고">
+      <div class="brandtext"><strong>Toilet Go</strong><span data-i18n="brandSub">부산 화장실 안내</span></div>
+    </div>
+    <select id="language" aria-label="Language">
+      <option value="ko">한국어</option><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="ja">日本語</option>
+    </select>
+  </div>
+  <div class="hero">
+    <h1 data-i18n="headline">가까운 화장실, 쉽게 찾기</h1>
+    <p data-i18n="subhead">현재 위치 주변의 화장실을 찾아 위치와 공개된 이용 정보를 확인하세요.</p>
+  </div>
+</header>
+<main>
+  <section class="panel searchpanel">
+    <h2 data-i18n="findTitle" style="font-size:18px;margin:0 0 12px">화장실 찾기</h2>
+    <div class="actions">
+      <button class="btn primary" id="locateBtn" data-i18n="locate">📍 내 주변 화장실 찾기</button>
+      <button class="btn secondary" id="openMapBtn" data-i18n="openMap">지도에서 주변 검색</button>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite" data-i18n="ready">위치 권한을 허용하면 주변 화장실을 검색합니다. 위치는 검색을 위해 브라우저에서 사용됩니다.</p>
+    <div style="margin-top:16px">
+      <label for="radius" data-i18n="radiusLabel" style="font-size:13px;font-weight:700;display:block;margin-bottom:7px">검색 범위</label>
+      <select id="radius" style="width:100%;max-width:none">
+        <option value="1000">1 km</option><option value="3000" selected>3 km</option><option value="5000">5 km</option><option value="10000">10 km</option>
+      </select>
+    </div>
+    <p class="note" data-i18n="privacy">위치 정보는 이 브라우저에서 검색 요청에 사용됩니다. 이 앱 자체에는 위치 기록을 저장하지 않습니다.</p>
+  </section>
+  <section class="panel resultspanel">
+    <div class="results-head"><h2 data-i18n="resultsTitle">주변 화장실</h2><span class="count" id="count">0</span></div>
+    <div class="filters">
+      <button class="chip active" data-filter="all" data-i18n="filterAll">전체</button>
+      <button class="chip" data-filter="accessible" data-i18n="filterAccessible">장애인 편의</button>
+      <button class="chip" data-filter="changing" data-i18n="filterChanging">기저귀 교환대</button>
+      <button class="chip" data-filter="free" data-i18n="filterFree">무료</button>
+    </div>
+    <div id="cards" class="cards"><div class="empty" data-i18n="empty">아직 검색 결과가 없습니다.<br>‘내 주변 화장실 찾기’를 눌러 시작하세요.</div></div>
+    <p class="note" data-i18n="dataNote">정보 출처: OpenStreetMap. 등록 정보가 실제 운영 상태와 다를 수 있으니 방문 전 확인해 주세요.</p>
+  </section>
+</main>
+<footer><strong>Toilet Go Busan</strong> · <span data-i18n="footer">YULIM Infotech에서 만든 다국어 화장실 안내 시제품</span><br><span data-i18n="disclaimer">현재 시제품입니다. 시설 정보의 정확성·최신성을 보장하지 않으며 긴급 상황에는 현장 안내를 우선해 주세요.</span></footer>
+<script>
+const translations={
+ko:{brandSub:"부산 화장실 안내",headline:"가까운 화장실, 쉽게 찾기",subhead:"현재 위치 주변의 화장실을 찾아 위치와 공개된 이용 정보를 확인하세요.",findTitle:"화장실 찾기",locate:"📍 내 주변 화장실 찾기",openMap:"지도에서 주변 검색",ready:"위치 권한을 허용하면 주변 화장실을 검색합니다. 위치는 검색을 위해 브라우저에서 사용됩니다.",radiusLabel:"검색 범위",privacy:"위치 정보는 이 브라우저에서 검색 요청에 사용됩니다. 이 앱 자체에는 위치 기록을 저장하지 않습니다.",resultsTitle:"주변 화장실",filterAll:"전체",filterAccessible:"장애인 편의",filterChanging:"기저귀 교환대",filterFree:"무료",empty:"아직 검색 결과가 없습니다.<br>‘내 주변 화장실 찾기’를 눌러 시작하세요.",dataNote:"정보 출처: OpenStreetMap. 등록 정보가 실제 운영 상태와 다를 수 있으니 방문 전 확인해 주세요.",footer:"YULIM Infotech에서 만든 다국어 화장실 안내 시제품",disclaimer:"현재 시제품입니다. 시설 정보의 정확성·최신성을 보장하지 않으며 긴급 상황에는 현장 안내를 우선해 주세요.",locating:"현재 위치를 확인하고 있습니다…",fetching:"주변 화장실 정보를 검색하고 있습니다…",found:"검색 완료",noResults:"이 범위에서 등록된 화장실을 찾지 못했습니다. 검색 범위를 넓혀 보세요.",geoError:"위치를 확인할 수 없습니다. 브라우저 위치 권한을 확인하거나 지도 검색을 이용해 주세요.",networkError:"정보를 가져오지 못했습니다. 잠시 후 다시 시도하거나 지도 검색을 이용해 주세요.",distance:"거리",navigate:"길찾기",osm:"OpenStreetMap",unknown:"이용 정보 미등록",free:"무료",paid:"유료 가능성",accessible:"장애인 편의 정보",changing:"기저귀 교환대",hours:"운영시간",updated:"공개 정보 기준",mapOpened:"지도 검색을 엽니다.",filterEmpty:"선택한 조건에 맞는 결과가 없습니다.",noName:"이름이 등록되지 않은 화장실",openHours:"운영시간",notListed:"미등록",openNow:"개방 여부 확인 필요"},
+en:{brandSub:"Busan Toilet Guide",headline:"Find a restroom nearby",subhead:"Find nearby restrooms and check the location and available public details.",findTitle:"Find a restroom",locate:"📍 Find toilets near me",openMap:"Search on map",ready:"Allow location access to search nearby. Your location is used by your browser for this search.",radiusLabel:"Search radius",privacy:"Your browser uses your location to request nearby results. This app does not store location history.",resultsTitle:"Nearby restrooms",filterAll:"All",filterAccessible:"Accessible",filterChanging:"Baby changing",filterFree:"Free",empty:"No results yet.<br>Tap “Find toilets near me” to start.",dataNote:"Data source: OpenStreetMap. Listings may not reflect current conditions; please verify before visiting.",footer:"A multilingual restroom guide prototype by YULIM Infotech",disclaimer:"Prototype only. Accuracy and freshness are not guaranteed. Follow on-site guidance when needed.",locating:"Checking your location…",fetching:"Searching nearby restroom data…",found:"Search complete",noResults:"No mapped restrooms found in this area. Try a larger radius.",geoError:"Could not access your location. Check browser permissions or use map search.",networkError:"Could not load data. Try again or use map search.",distance:"Distance",navigate:"Directions",osm:"OpenStreetMap",unknown:"Details not listed",free:"Free",paid:"May require payment",accessible:"Accessibility info",changing:"Baby changing",hours:"Opening hours",updated:"Based on public listing",mapOpened:"Opening map search.",filterEmpty:"No results match this filter.",noName:"Unnamed restroom",openHours:"Hours",notListed:"Not listed",openNow:"Access status unconfirmed"},
+"zh-CN":{brandSub:"釜山洗手间指南",headline:"轻松查找附近洗手间",subhead:"查找当前位置附近的洗手间，并查看公开的位置和使用信息。",findTitle:"查找洗手间",locate:"📍 查找附近洗手间",openMap:"在地图中搜索",ready:"允许定位后即可搜索附近设施。浏览器会使用您的位置进行搜索。",radiusLabel:"搜索范围",privacy:"浏览器会使用您的位置请求搜索结果。本应用不会保存位置历史。",resultsTitle:"附近洗手间",filterAll:"全部",filterAccessible:"无障碍设施",filterChanging:"婴儿护理台",filterFree:"免费",empty:"暂无搜索结果。<br>点击“查找附近洗手间”开始。",dataNote:"数据来源：OpenStreetMap。登记信息可能与实际情况不同，请在前往前确认。",footer:"YULIM Infotech 多语言洗手间指南原型",disclaimer:"当前为原型，不保证信息准确或实时。必要时请以现场指引为准。",locating:"正在获取位置…",fetching:"正在搜索附近洗手间…",found:"搜索完成",noResults:"此范围内没有找到已登记的洗手间，请扩大搜索范围。",geoError:"无法获取位置。请检查浏览器权限或使用地图搜索。",networkError:"无法获取数据，请稍后重试或使用地图搜索。",distance:"距离",navigate:"路线",osm:"OpenStreetMap",unknown:"暂无使用信息",free:"免费",paid:"可能收费",accessible:"无障碍信息",changing:"婴儿护理台",hours:"开放时间",updated:"依据公开登记信息",mapOpened:"正在打开地图搜索。",filterEmpty:"没有符合筛选条件的结果。",noName:"未命名洗手间",openHours:"开放时间",notListed:"未登记",openNow:"开放状态待确认"},
+"zh-TW":{brandSub:"釜山洗手間指南",headline:"輕鬆尋找附近洗手間",subhead:"搜尋目前位置附近的洗手間，查看公開的位置與使用資訊。",findTitle:"尋找洗手間",locate:"📍 尋找附近洗手間",openMap:"在地圖中搜尋",ready:"允許定位後即可搜尋附近設施。瀏覽器會使用您的位置進行搜尋。",radiusLabel:"搜尋範圍",privacy:"瀏覽器會使用您的位置請求搜尋結果。本應用程式不會儲存位置紀錄。",resultsTitle:"附近洗手間",filterAll:"全部",filterAccessible:"無障礙設施",filterChanging:"尿布更換台",filterFree:"免費",empty:"目前沒有搜尋結果。<br>點選「尋找附近洗手間」開始。",dataNote:"資料來源：OpenStreetMap。登錄資訊可能與實際情況不同，前往前請先確認。",footer:"YULIM Infotech 多語言洗手間指南原型",disclaimer:"目前為原型，不保證資訊正確或即時。必要時請以現場指引為準。",locating:"正在取得位置…",fetching:"正在搜尋附近洗手間…",found:"搜尋完成",noResults:"此範圍內找不到已登錄的洗手間，請擴大搜尋範圍。",geoError:"無法取得位置。請檢查瀏覽器權限或使用地圖搜尋。",networkError:"無法取得資料，請稍後再試或使用地圖搜尋。",distance:"距離",navigate:"路線",osm:"OpenStreetMap",unknown:"尚無使用資訊",free:"免費",paid:"可能收費",accessible:"無障礙資訊",changing:"尿布更換台",hours:"開放時間",updated:"依公開登錄資訊",mapOpened:"正在開啟地圖搜尋。",filterEmpty:"沒有符合篩選條件的結果。",noName:"未命名洗手間",openHours:"開放時間",notListed:"未登錄",openNow:"開放狀態待確認"},
+ja:{brandSub:"釜山トイレ案内",headline:"近くのトイレを簡単に検索",subhead:"現在地周辺のトイレを探し、公開されている場所や利用情報を確認できます。",findTitle:"トイレを探す",locate:"📍 近くのトイレを探す",openMap:"地図で検索",ready:"位置情報を許可すると周辺を検索します。位置情報はブラウザーで検索に使用されます。",radiusLabel:"検索範囲",privacy:"位置情報はブラウザーから検索を行うために使用されます。このアプリは位置履歴を保存しません。",resultsTitle:"近くのトイレ",filterAll:"すべて",filterAccessible:"バリアフリー",filterChanging:"おむつ交換台",filterFree:"無料",empty:"検索結果はまだありません。<br>「近くのトイレを探す」を押してください。",dataNote:"データ提供元：OpenStreetMap。実際の状況と異なる場合があるため、訪問前にご確認ください。",footer:"YULIM Infotech 多言語トイレ案内プロトタイプ",disclaimer:"試作版です。情報の正確性・最新性は保証されません。必要に応じて現地の案内を優先してください。",locating:"現在地を確認しています…",fetching:"周辺のトイレ情報を検索しています…",found:"検索完了",noResults:"この範囲では登録されたトイレが見つかりません。検索範囲を広げてください。",geoError:"位置情報を取得できません。ブラウザーの権限を確認するか地図検索をご利用ください。",networkError:"情報を取得できませんでした。再試行するか地図検索をご利用ください。",distance:"距離",navigate:"ルート",osm:"OpenStreetMap",unknown:"利用情報なし",free:"無料",paid:"有料の可能性",accessible:"バリアフリー情報",changing:"おむつ交換台",hours:"営業時間",updated:"公開情報に基づく",mapOpened:"地図検索を開きます。",filterEmpty:"条件に一致する結果がありません。",noName:"名称未登録のトイレ",openHours:"営業時間",notListed:"未登録",openNow:"利用可否は未確認"}
+};
+let lang="ko", userPos=null, allResults=[], activeFilter="all";
+const $=id=>document.getElementById(id);
+function t(key){return (translations[lang]||translations.ko)[key]||translations.ko[key]||key}
+function applyLanguage(){
+ document.documentElement.lang=lang;
+ document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n; if(translations[lang][key]) el.innerHTML=translations[lang][key]});
+ renderResults();
+}
+$("language").addEventListener("change",e=>{lang=e.target.value;applyLanguage()});
+$("openMapBtn").addEventListener("click",()=>{const q=userPos?`${userPos.lat},${userPos.lon}`:"Busan";window.open("https://www.google.com/maps/search/toilet+restroom/@"+(userPos?`${userPos.lat},${userPos.lon},15z`:"35.1796,129.0756,12z"),"_blank","noopener");setStatus(t("mapOpened"),"")});
+$("locateBtn").addEventListener("click",()=>{
+ if(!navigator.geolocation){setStatus(t("geoError"),"error");return}
+ $("locateBtn").disabled=true;setStatus(t("locating"),"");
+ navigator.geolocation.getCurrentPosition(async pos=>{userPos={lat:pos.coords.latitude,lon:pos.coords.longitude};await fetchToilets()},()=>{$("locateBtn").disabled=false;setStatus(t("geoError"),"error")},{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+});
+$("radius").addEventListener("change",()=>{if(userPos)fetchToilets()});
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{activeFilter=b.dataset.filter;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));renderResults()}));
+function setStatus(msg,type){$("status").textContent=msg;$("status").className="status "+(type||"")}
+function distanceKm(a,b,c,d){const r=Math.PI/180, x=(c-a)*r,y=(d-b)*r;const h=Math.sin(x/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)**2;return 6371*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h))}
+async function fetchToilets(){
+ setStatus(t("fetching"),"");$("locateBtn").disabled=true;
+ const radius=Number($("radius").value);
+ const query=`[out:json][timeout:25];(node["amenity"="toilets"](around:${radius},${userPos.lat},${userPos.lon});way["amenity"="toilets"](around:${radius},${userPos.lat},${userPos.lon});relation["amenity"="toilets"](around:${radius},${userPos.lat},${userPos.lon}););out center tags;`;
+ try{
+  const response=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:"data="+encodeURIComponent(query)});
+  if(!response.ok)throw new Error("network");
+  const data=await response.json();
+  allResults=(data.elements||[]).map(el=>{const tags=el.tags||{}, lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(lat==null||lon==null)return null;return {id:el.type+"/"+el.id,lat,lon,tags,dist:distanceKm(userPos.lat,userPos.lon,lat,lon)}}).filter(Boolean).sort((a,b)=>a.dist-b.dist);
+  setStatus(`${t("found")}: ${allResults.length}`,"ok");
+  renderResults();
+ }catch(e){setStatus(t("networkError"),"error");}
+ finally{$("locateBtn").disabled=false}
+}
+function renderResults(){
+ const list=allResults.filter(x=>{
+  const tags=x.tags;
+  if(activeFilter==="accessible")return tags.wheelchair==="yes"||tags["toilets:wheelchair"]==="yes"||tags.accessible==="yes";
+  if(activeFilter==="changing")return tags.diaper==="yes"||tags["changing_table"]==="yes"||tags["changing_table:location"]||tags["baby_changing_station"]==="yes";
+  if(activeFilter==="free")return tags.fee==="no";
+  return true;
+ });
+ $("count").textContent=allResults.length?`${list.length} / ${allResults.length}`:"0";
+ if(!allResults.length){$("cards").innerHTML=`<div class="empty">${t("empty")}</div>`;return}
+ if(!list.length){$("cards").innerHTML=`<div class="empty">${t("filterEmpty")}</div>`;return}
+ $("cards").innerHTML=list.slice(0,100).map(x=>{
+  const g=x.tags, name=g.name||g["name:en"]||t("noName"), distance=x.dist<1?`${Math.round(x.dist*1000)} m`:`${x.dist.toFixed(1)} km`;
+  const tags=[];
+  if(g.fee==="no")tags.push(t("free"));else if(g.fee==="yes")tags.push(t("paid"));
+  if(g.wheelchair==="yes"||g["toilets:wheelchair"]==="yes"||g.accessible==="yes")tags.push(t("accessible"));
+  if(g.diaper==="yes"||g.changing_table==="yes"||g["baby_changing_station"]==="yes")tags.push(t("changing"));
+  const hours=g.opening_hours||g["opening_hours:covid19"]||"";
+  const address=[g["addr:street"],g["addr:housenumber"],g["addr:suburb"]].filter(Boolean).join(" ");
+  const maps=`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lon}`;
+  const osm=`https://www.openstreetmap.org/${x.id.replace("/","/")}`;
+  return `<article class="toilet"><h3>${escapeHtml(name)}</h3><div class="meta">${t("distance")}: ${distance}${address?" · "+escapeHtml(address):""}</div><div class="tags">${tags.map(z=>`<span class="tag">${escapeHtml(z)}</span>`).join("")}</div><div class="meta">${hours?`${t("hours")}: ${escapeHtml(hours)}`:t("openNow")}</div><div class="cardlinks"><a href="${maps}" target="_blank" rel="noopener">${t("navigate")} ↗</a><a href="${osm}" target="_blank" rel="noopener">${t("osm")} ↗</a></div></article>`;
+ }).join("");
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+</script>
+</body>
+</html>
